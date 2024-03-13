@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Search App</title>
+  <style>
+    * {
+      margin: 5px 0;
+    }
+
+    body {
+      text-align: center;
+    }
+
+    #search-bar {
+      width: 40%;
+      height: 30px;
+      margin: 30px 0;
+    }
+
+    #photo-divs {
+      display: flex;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+
+    .photo-div {
+      width: 33%;
+    }
+
+    img {
+    width: 100%;
+    height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <form id="search-form">
+    <input type="text" id="search-bar" placeholder="Search">
+  </form>
+  <div id="photo-divs"></div>
+  <script>
+    var searchForm = document.querySelector('#search-form');
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Typical action to be performed when the document is ready:
+          var res = JSON.parse(xhttp.responseText);
+          console.log(res.results)
+          var photoData = res.results.map(function(result){
+            return result.urls['regular'];
+          });
+
+          var container = document.querySelector('#photo-divs');
+          container.innerHTML = '';
+          photoData.forEach(function(photo) {
+            // console.log(photo);
+            var photoDiv = document.createElement('div');
+            photoDiv.classList.add('photo-div');
+            photoDiv.innerHTML = `<img src="${photo}">`;
+
+            container.appendChild(photoDiv);
+          })
+      }
+};
+var textValue = document.querySelector('#search-bar').value
+xhttp.open("GET", `https://api.unsplash.com/search/photos?page=1&query=${textValue}`, true);
+xhttp.setRequestHeader('Authorization', 'Client-ID P5_2DXuJAGfLd6t3gEDTLAXdVZo8rMuxoyqhciq8mPM');
+xhttp.send();
+})
+</script>
+</body>
+</html>
